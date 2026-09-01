@@ -1,0 +1,12 @@
+services:
+  openmaic:
+    build:
+      context: .
+    expose:
+      - '3000'
+    volumes:
+      - openmaic-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  openmaic-data:
