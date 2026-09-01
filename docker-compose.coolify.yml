@@ -9,7 +9,7 @@ services:
       - /bin/sh
       - -c
       - |
-        printf 'providers:\n  omniroute:\n    apiKey: "%s"\n    baseUrl: "http://192.168.1.66:20128/v1"\n    models: ["worker","strong","standard","light","vision"]\n' "$$OMNIROUTE_API_KEY" > /app/server-providers.yml
+        printf 'providers:\n  openai:\n    apiKey: "%s"\n    baseUrl: "http://192.168.1.66:20128/v1"\n    models: ["worker","strong","standard","light","vision"]\n' "$$OMNIROUTE_API_KEY" > /app/server-providers.yml
         exec node server.js
     volumes:
       - openmaic-data:/app/data
