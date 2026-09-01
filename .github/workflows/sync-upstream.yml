@@ -1,0 +1,46 @@
+name: sync-upstream
+
+on:
+  schedule:
+    # Ежедневно 03:00 UTC (06:00 MSK): подтягиваем свежий main из THU-MAIC/OpenMAIC.
+    # Push в main форка триггерит Coolify webhook -> auto-deploy.
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout fork main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Fetch upstream
+        run: |
+          git remote add upstream https://github.com/THU-MAIC/OpenMAIC.git
+          git fetch upstream main --force
+
+      - name: Merge upstream into fork main
+        run: |
+          git merge --no-edit upstream/main
+          git push origin main
+
+      - name: Report
+        run: |
+          echo "fork main now at: $(git rev-parse --short HEAD)"
+          echo "upstream main at: $(git rev-parse --short upstream/main)"
